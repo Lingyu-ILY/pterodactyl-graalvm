@@ -1,0 +1,44 @@
+name: build containers
+on:
+  push:
+    branches:
+      - master
+jobs:
+  push:
+    name: Push
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tag:
+          - { CONTEXT: "./ce", PREFIX: "jdk-ce", IMAGE: "8" }
+          - { CONTEXT: "./ce", PREFIX: "jdk-ce", IMAGE: "11" }
+          - { CONTEXT: "./ce", PREFIX: "jdk-ce", IMAGE: "17" }
+          - { CONTEXT: "./ce", PREFIX: "jdk-ce", IMAGE: "20" }
+          - { CONTEXT: "./ce", PREFIX: "jdk-ce", IMAGE: "21" }
+          - { CONTEXT: "./ce", PREFIX: "jdk-ce", IMAGE: "22" }
+          - { CONTEXT: "./ee", PREFIX: "jdk-ee", IMAGE: "8" }
+          - { CONTEXT: "./ee", PREFIX: "jdk-ee", IMAGE: "11" }
+          - { CONTEXT: "./ee", PREFIX: "jdk-ee", IMAGE: "17" }
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-buildx-action@v2
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+      - uses: docker/login-action@v2
+        with:
+          registry: container-registry.oracle.com
+          username: ${{ secrets.ORACLE_SSO_USERNAME }}
+          password: ${{ secrets.ORACLE_SSO_PASSWORD }}
+      - uses: docker/build-push-action@v4
+        with:
+          context: ./
+          file: ${{ matrix.tag.CONTEXT }}/${{ matrix.tag.IMAGE }}/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/lingyu-ily/pterodactyl-graalvm:${{ matrix.tag.PREFIX }}-${{ matrix.tag.IMAGE }}
