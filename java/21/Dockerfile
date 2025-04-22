@@ -32,7 +32,7 @@ RUN         apt-get update -y \
             && useradd -d /home/container -m container
 
 # 設定環境變數與工作路徑
-ENV         USER=container HOME=/home/container
+ENV         USER=root HOME=/home/container
 WORKDIR     /home/container
 
 # 複製啟動腳本
