@@ -38,6 +38,7 @@ WORKDIR     /home/container
 # 複製啟動腳本
 COPY        ./../entrypoint.sh /entrypoint.sh
 RUN         chmod +x /entrypoint.sh
+RUN         echo "root:x:0:0:root:/root:/bin/bash" >> /etc/passwd
 
 # 使用 root 啟動，entrypoint 會切換回 container
 USER        root
