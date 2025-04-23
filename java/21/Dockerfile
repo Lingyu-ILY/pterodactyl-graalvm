@@ -28,9 +28,8 @@ LABEL       org.opencontainers.image.source="https://github.com/pterodactyl/yolk
 LABEL       org.opencontainers.image.licenses=MIT
 
 RUN         apt-get update -y \
-            && apt-get install -y lsof curl ca-certificates openssl git tar sqlite3 fontconfig libfreetype6 tzdata iproute2 libstdc++6 libcap2-bin \
-            && useradd -d /home/container -m container \
-            && setcap cap_net_admin=eip /sbin/ip
+            && apt-get install -y lsof curl ca-certificates openssl git tar sqlite3 fontconfig libfreetype6 tzdata iproute2 libstdc++6 sudo \
+            && useradd -d /home/container -m container
 
 # 設定環境變數與工作路徑
 ENV         USER=root HOME=/home/container
